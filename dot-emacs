@@ -1,0 +1,77 @@
+;;; General configurations
+;; Packages
+
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(package-initialize)
+
+;; Additional packages
+(defvar my-packages
+  '(better-defaults
+    projectile
+    conda
+    company
+    company-jedi
+    )
+  )
+(mapc #'(lambda (package)
+	  (unless (package-installed-p package)
+	    (package-install package)))
+      my-packages)
+
+;; UI configuration
+(tool-bar-mode -1)
+(global-linum-mode t)
+(load-theme 'tango-dark t)
+(setq inhibit-startup-message t)
+
+;; Auto complete
+(setq tab-always-indent 'complete)
+(add-to-list 'completion-styles 'initials t)
+
+
+;;; Python
+;; Conda
+(setq conda-anaconda-home (expand-file-name "~/Programs/anaconda3"))
+(conda-env-initialize-interactive-shells)
+(conda-env-initialize-eshell)
+(conda-env-autoactivate-mode t)
+(conda-env-activate "/home/klimov/envs/search")
+
+;; Autocomplete
+(setq python-shell-interpreter "/home/klimov/envs/search/bin/python")
+(global-company-mode t)
+(setq company-idle-delay 0)
+(setq company-minimum-prefix-length 3)
+(company-quickhelp-mode 1)
+(setq company-quickhelp-delay 0)
+(defun my/python-mode-hook ())
+(add-to-list 'company-backends 'company-jedi)
+(add-hook 'python-mode-hook 'my/python-mode-hook)
+(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+(add-hook 'python-mode-hook 'flycheck-mode)
+(add-hook 'python-mode-hook 'hs-minor-mode)
+(setq jedi:server-command
+      '("/home/klimov/envs/search/bin/python" "/home/klimov/.emacs.d/elpa/jedi-core-20191011.1750/jediepcserver.py"))
+
+;; Projectile
+(projectile-mode +1)
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+(define-key projectile-mode-map (kbd "M-p") 'projectile-command-map)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (company company-jedi company-quickhelp py-autopep8 flycheck-tip flycheck flycheck-pyflakes highlight-indentation pyvenv projectile conda better-defaults))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
